@@ -3,6 +3,7 @@ module github.com/suikast42/nexus-housekeeper
 go 1.23.2
 
 require (
+	github.com/antihax/optional v1.0.0
 	github.com/knadh/koanf/parsers/hcl v0.1.0
 	github.com/knadh/koanf/providers/env v1.0.0
 	github.com/knadh/koanf/providers/file v1.1.2
@@ -10,6 +11,7 @@ require (
 	github.com/knadh/koanf/v2 v2.1.1
 	github.com/rs/zerolog v1.33.0
 	github.com/spf13/pflag v1.0.5
+	golang.org/x/oauth2 v0.23.0
 )
 
 require (

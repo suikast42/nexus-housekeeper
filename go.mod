@@ -4,6 +4,7 @@ go 1.23.2
 
 require (
 	github.com/antihax/optional v1.0.0
+	github.com/blang/semver v3.5.1+incompatible
 	github.com/knadh/koanf/parsers/hcl v0.1.0
 	github.com/knadh/koanf/providers/env v1.0.0
 	github.com/knadh/koanf/providers/file v1.1.2

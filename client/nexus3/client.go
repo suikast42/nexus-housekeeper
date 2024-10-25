@@ -15,6 +15,8 @@ import (
 	"encoding/xml"
 	"errors"
 	"fmt"
+	"github.com/rs/zerolog"
+	"github.com/suikast42/nexus-housekeeper/logging"
 	"io"
 	"mime/multipart"
 	"net/http"
@@ -39,6 +41,7 @@ var (
 // APIClient manages communication with the Nexus Repository Manager REST API API v3.68.1-02
 // In most cases there should be only one, shared, APIClient.
 type APIClient struct {
+	logger zerolog.Logger
 	cfg    *Configuration
 	common service // Reuse a single struct instead of allocating one for each service on the heap.
 
@@ -109,6 +112,7 @@ func NewAPIClient(cfg *Configuration) *APIClient {
 	}
 
 	c := &APIClient{}
+	c.logger = logging.Logger()
 	c.cfg = cfg
 	c.common.client = c
 
@@ -219,6 +223,8 @@ func parameterToString(obj interface{}, collectionFormat string) string {
 
 // callAPI do the request.
 func (c *APIClient) callAPI(request *http.Request) (*http.Response, error) {
+
+	c.logger.Info().Msg(fmt.Sprint("Calling API: ", request.URL.String()))
 	return c.cfg.HTTPClient.Do(request)
 }
 
@@ -384,17 +390,17 @@ func (c *APIClient) prepareRequest(
 }
 
 func (c *APIClient) decode(v interface{}, b []byte, contentType string) (err error) {
-		if strings.Contains(contentType, "application/xml") {
-			if err = xml.Unmarshal(b, v); err != nil {
-				return err
-			}
-			return nil
-		} else if strings.Contains(contentType, "application/json") {
-			if err = json.Unmarshal(b, v); err != nil {
-				return err
-			}
-			return nil
+	if strings.Contains(contentType, "application/xml") {
+		if err = xml.Unmarshal(b, v); err != nil {
+			return err
 		}
+		return nil
+	} else if strings.Contains(contentType, "application/json") {
+		if err = json.Unmarshal(b, v); err != nil {
+			return err
+		}
+		return nil
+	}
 	return errors.New("undefined response type")
 }
 

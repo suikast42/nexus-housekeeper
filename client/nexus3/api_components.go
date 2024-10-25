@@ -1,4 +1,3 @@
-
 /*
  * Nexus Repository Manager REST API
  *
@@ -11,13 +10,13 @@ package nexus3
 
 import (
 	"context"
+	"fmt"
+	"github.com/antihax/optional"
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"strings"
-	"fmt"
-	"github.com/antihax/optional"
 	"os"
+	"strings"
 )
 
 // Linger please
@@ -26,11 +25,11 @@ var (
 )
 
 type ComponentsApiService service
+
 /*
 ComponentsApiService Delete a single component
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param id ID of the component to delete
-
+  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  - @param id ID of the component to delete
 */
 func (a *ComponentsApiService) DeleteComponent(ctx context.Context, id string) (*http.Response, error) {
 	var (
@@ -38,7 +37,6 @@ func (a *ComponentsApiService) DeleteComponent(ctx context.Context, id string) (
 		localVarPostBody   interface{}
 		localVarFileName   string
 		localVarFileBytes  []byte
-		
 	)
 
 	// create path and map variables
@@ -82,10 +80,9 @@ func (a *ComponentsApiService) DeleteComponent(ctx context.Context, id string) (
 		return localVarHttpResponse, err
 	}
 
-
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body: localVarBody,
+			body:  localVarBody,
 			error: localVarHttpResponse.Status,
 		}
 		return localVarHttpResponse, newErr
@@ -93,18 +90,20 @@ func (a *ComponentsApiService) DeleteComponent(ctx context.Context, id string) (
 
 	return localVarHttpResponse, nil
 }
+
 /*
 ComponentsApiService Get a single component
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param id ID of the component to retrieve
+  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  - @param id ID of the component to retrieve
+
 @return ComponentXo
 */
 func (a *ComponentsApiService) GetComponentById(ctx context.Context, id string) (ComponentXo, *http.Response, error) {
 	var (
-		localVarHttpMethod = strings.ToUpper("Get")
-		localVarPostBody   interface{}
-		localVarFileName   string
-		localVarFileBytes  []byte
+		localVarHttpMethod  = strings.ToUpper("Get")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
 		localVarReturnValue ComponentXo
 	)
 
@@ -151,32 +150,33 @@ func (a *ComponentsApiService) GetComponentById(ctx context.Context, id string) 
 
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-		if err == nil { 
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
 			return localVarReturnValue, localVarHttpResponse, err
 		}
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body: localVarBody,
+			body:  localVarBody,
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 200 {
 			var v ComponentXo
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
 
 	return localVarReturnValue, localVarHttpResponse, nil
 }
+
 /*
 ComponentsApiService List components
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -187,15 +187,15 @@ ComponentsApiService List components
 */
 
 type ComponentsApiGetComponentsOpts struct {
-    ContinuationToken optional.String
+	ContinuationToken optional.String
 }
 
 func (a *ComponentsApiService) GetComponents(ctx context.Context, repository string, localVarOptionals *ComponentsApiGetComponentsOpts) (PageComponentXo, *http.Response, error) {
 	var (
-		localVarHttpMethod = strings.ToUpper("Get")
-		localVarPostBody   interface{}
-		localVarFileName   string
-		localVarFileBytes  []byte
+		localVarHttpMethod  = strings.ToUpper("Get")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
 		localVarReturnValue PageComponentXo
 	)
 
@@ -245,107 +245,108 @@ func (a *ComponentsApiService) GetComponents(ctx context.Context, repository str
 
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-		if err == nil { 
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
 			return localVarReturnValue, localVarHttpResponse, err
 		}
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body: localVarBody,
+			body:  localVarBody,
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 200 {
 			var v PageComponentXo
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
 
 	return localVarReturnValue, localVarHttpResponse, nil
 }
+
 /*
 ComponentsApiService Upload a single component
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param repository Name of the repository to which you would like to upload the component
  * @param optional nil or *ComponentsApiUploadComponentOpts - Optional Parameters:
-     * @param "RAsset" (optional.*os.File) - 
-     * @param "RAssetPathId" (optional.String) - 
-     * @param "PypiAsset" (optional.*os.File) - 
-     * @param "HelmAsset" (optional.*os.File) - 
-     * @param "YumDirectory" (optional.String) - 
-     * @param "YumAsset" (optional.*os.File) - 
-     * @param "YumAssetFilename" (optional.String) - 
-     * @param "DockerAsset" (optional.*os.File) - 
-     * @param "RubygemsAsset" (optional.*os.File) - 
-     * @param "NugetAsset" (optional.*os.File) - 
-     * @param "NpmAsset" (optional.*os.File) - 
-     * @param "RawDirectory" (optional.String) - 
-     * @param "RawAsset1" (optional.*os.File) - 
-     * @param "RawAsset1Filename" (optional.String) - 
-     * @param "RawAsset2" (optional.*os.File) - 
-     * @param "RawAsset2Filename" (optional.String) - 
-     * @param "RawAsset3" (optional.*os.File) - 
-     * @param "RawAsset3Filename" (optional.String) - 
-     * @param "AptAsset" (optional.*os.File) - 
-     * @param "Maven2GroupId" (optional.String) - 
-     * @param "Maven2ArtifactId" (optional.String) - 
-     * @param "Maven2Version" (optional.String) - 
-     * @param "Maven2GeneratePom" (optional.Bool) - 
-     * @param "Maven2Packaging" (optional.String) - 
-     * @param "Maven2Asset1" (optional.*os.File) - 
-     * @param "Maven2Asset1Classifier" (optional.String) - 
-     * @param "Maven2Asset1Extension" (optional.String) - 
-     * @param "Maven2Asset2" (optional.*os.File) - 
-     * @param "Maven2Asset2Classifier" (optional.String) - 
-     * @param "Maven2Asset2Extension" (optional.String) - 
-     * @param "Maven2Asset3" (optional.*os.File) - 
-     * @param "Maven2Asset3Classifier" (optional.String) - 
-     * @param "Maven2Asset3Extension" (optional.String) - 
+     * @param "RAsset" (optional.*os.File) -
+     * @param "RAssetPathId" (optional.String) -
+     * @param "PypiAsset" (optional.*os.File) -
+     * @param "HelmAsset" (optional.*os.File) -
+     * @param "YumDirectory" (optional.String) -
+     * @param "YumAsset" (optional.*os.File) -
+     * @param "YumAssetFilename" (optional.String) -
+     * @param "DockerAsset" (optional.*os.File) -
+     * @param "RubygemsAsset" (optional.*os.File) -
+     * @param "NugetAsset" (optional.*os.File) -
+     * @param "NpmAsset" (optional.*os.File) -
+     * @param "RawDirectory" (optional.String) -
+     * @param "RawAsset1" (optional.*os.File) -
+     * @param "RawAsset1Filename" (optional.String) -
+     * @param "RawAsset2" (optional.*os.File) -
+     * @param "RawAsset2Filename" (optional.String) -
+     * @param "RawAsset3" (optional.*os.File) -
+     * @param "RawAsset3Filename" (optional.String) -
+     * @param "AptAsset" (optional.*os.File) -
+     * @param "Maven2GroupId" (optional.String) -
+     * @param "Maven2ArtifactId" (optional.String) -
+     * @param "Maven2Version" (optional.String) -
+     * @param "Maven2GeneratePom" (optional.Bool) -
+     * @param "Maven2Packaging" (optional.String) -
+     * @param "Maven2Asset1" (optional.*os.File) -
+     * @param "Maven2Asset1Classifier" (optional.String) -
+     * @param "Maven2Asset1Extension" (optional.String) -
+     * @param "Maven2Asset2" (optional.*os.File) -
+     * @param "Maven2Asset2Classifier" (optional.String) -
+     * @param "Maven2Asset2Extension" (optional.String) -
+     * @param "Maven2Asset3" (optional.*os.File) -
+     * @param "Maven2Asset3Classifier" (optional.String) -
+     * @param "Maven2Asset3Extension" (optional.String) -
 
 */
 
 type ComponentsApiUploadComponentOpts struct {
-    RAsset optional.Interface
-    RAssetPathId optional.String
-    PypiAsset optional.Interface
-    HelmAsset optional.Interface
-    YumDirectory optional.String
-    YumAsset optional.Interface
-    YumAssetFilename optional.String
-    DockerAsset optional.Interface
-    RubygemsAsset optional.Interface
-    NugetAsset optional.Interface
-    NpmAsset optional.Interface
-    RawDirectory optional.String
-    RawAsset1 optional.Interface
-    RawAsset1Filename optional.String
-    RawAsset2 optional.Interface
-    RawAsset2Filename optional.String
-    RawAsset3 optional.Interface
-    RawAsset3Filename optional.String
-    AptAsset optional.Interface
-    Maven2GroupId optional.String
-    Maven2ArtifactId optional.String
-    Maven2Version optional.String
-    Maven2GeneratePom optional.Bool
-    Maven2Packaging optional.String
-    Maven2Asset1 optional.Interface
-    Maven2Asset1Classifier optional.String
-    Maven2Asset1Extension optional.String
-    Maven2Asset2 optional.Interface
-    Maven2Asset2Classifier optional.String
-    Maven2Asset2Extension optional.String
-    Maven2Asset3 optional.Interface
-    Maven2Asset3Classifier optional.String
-    Maven2Asset3Extension optional.String
+	RAsset                 optional.Interface
+	RAssetPathId           optional.String
+	PypiAsset              optional.Interface
+	HelmAsset              optional.Interface
+	YumDirectory           optional.String
+	YumAsset               optional.Interface
+	YumAssetFilename       optional.String
+	DockerAsset            optional.Interface
+	RubygemsAsset          optional.Interface
+	NugetAsset             optional.Interface
+	NpmAsset               optional.Interface
+	RawDirectory           optional.String
+	RawAsset1              optional.Interface
+	RawAsset1Filename      optional.String
+	RawAsset2              optional.Interface
+	RawAsset2Filename      optional.String
+	RawAsset3              optional.Interface
+	RawAsset3Filename      optional.String
+	AptAsset               optional.Interface
+	Maven2GroupId          optional.String
+	Maven2ArtifactId       optional.String
+	Maven2Version          optional.String
+	Maven2GeneratePom      optional.Bool
+	Maven2Packaging        optional.String
+	Maven2Asset1           optional.Interface
+	Maven2Asset1Classifier optional.String
+	Maven2Asset1Extension  optional.String
+	Maven2Asset2           optional.Interface
+	Maven2Asset2Classifier optional.String
+	Maven2Asset2Extension  optional.String
+	Maven2Asset3           optional.Interface
+	Maven2Asset3Classifier optional.String
+	Maven2Asset3Extension  optional.String
 }
 
 func (a *ComponentsApiService) UploadComponent(ctx context.Context, repository string, localVarOptionals *ComponentsApiUploadComponentOpts) (*http.Response, error) {
@@ -354,7 +355,6 @@ func (a *ComponentsApiService) UploadComponent(ctx context.Context, repository s
 		localVarPostBody   interface{}
 		localVarFileName   string
 		localVarFileBytes  []byte
-		
 	)
 
 	// create path and map variables
@@ -382,12 +382,12 @@ func (a *ComponentsApiService) UploadComponent(ctx context.Context, repository s
 	if localVarHttpHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
 	}
-    var localVarFile *os.File
+	var localVarFile *os.File
 	if localVarOptionals != nil && localVarOptionals.RAsset.IsSet() {
 		localVarFileOk := false
 		localVarFile, localVarFileOk = localVarOptionals.RAsset.Value().(*os.File)
 		if !localVarFileOk {
-				return nil, reportError("rAsset should be *os.File")
+			return nil, reportError("rAsset should be *os.File")
 		}
 	}
 	if localVarFile != nil {
@@ -399,12 +399,11 @@ func (a *ComponentsApiService) UploadComponent(ctx context.Context, repository s
 	if localVarOptionals != nil && localVarOptionals.RAssetPathId.IsSet() {
 		localVarFormParams.Add("r.asset.pathId", parameterToString(localVarOptionals.RAssetPathId.Value(), ""))
 	}
-    var localVarFile *os.File
 	if localVarOptionals != nil && localVarOptionals.PypiAsset.IsSet() {
 		localVarFileOk := false
 		localVarFile, localVarFileOk = localVarOptionals.PypiAsset.Value().(*os.File)
 		if !localVarFileOk {
-				return nil, reportError("pypiAsset should be *os.File")
+			return nil, reportError("pypiAsset should be *os.File")
 		}
 	}
 	if localVarFile != nil {
@@ -413,12 +412,11 @@ func (a *ComponentsApiService) UploadComponent(ctx context.Context, repository s
 		localVarFileName = localVarFile.Name()
 		localVarFile.Close()
 	}
-    var localVarFile *os.File
 	if localVarOptionals != nil && localVarOptionals.HelmAsset.IsSet() {
 		localVarFileOk := false
 		localVarFile, localVarFileOk = localVarOptionals.HelmAsset.Value().(*os.File)
 		if !localVarFileOk {
-				return nil, reportError("helmAsset should be *os.File")
+			return nil, reportError("helmAsset should be *os.File")
 		}
 	}
 	if localVarFile != nil {
@@ -430,12 +428,11 @@ func (a *ComponentsApiService) UploadComponent(ctx context.Context, repository s
 	if localVarOptionals != nil && localVarOptionals.YumDirectory.IsSet() {
 		localVarFormParams.Add("yum.directory", parameterToString(localVarOptionals.YumDirectory.Value(), ""))
 	}
-    var localVarFile *os.File
 	if localVarOptionals != nil && localVarOptionals.YumAsset.IsSet() {
 		localVarFileOk := false
 		localVarFile, localVarFileOk = localVarOptionals.YumAsset.Value().(*os.File)
 		if !localVarFileOk {
-				return nil, reportError("yumAsset should be *os.File")
+			return nil, reportError("yumAsset should be *os.File")
 		}
 	}
 	if localVarFile != nil {
@@ -447,12 +444,11 @@ func (a *ComponentsApiService) UploadComponent(ctx context.Context, repository s
 	if localVarOptionals != nil && localVarOptionals.YumAssetFilename.IsSet() {
 		localVarFormParams.Add("yum.asset.filename", parameterToString(localVarOptionals.YumAssetFilename.Value(), ""))
 	}
-    var localVarFile *os.File
 	if localVarOptionals != nil && localVarOptionals.DockerAsset.IsSet() {
 		localVarFileOk := false
 		localVarFile, localVarFileOk = localVarOptionals.DockerAsset.Value().(*os.File)
 		if !localVarFileOk {
-				return nil, reportError("dockerAsset should be *os.File")
+			return nil, reportError("dockerAsset should be *os.File")
 		}
 	}
 	if localVarFile != nil {
@@ -461,12 +457,11 @@ func (a *ComponentsApiService) UploadComponent(ctx context.Context, repository s
 		localVarFileName = localVarFile.Name()
 		localVarFile.Close()
 	}
-    var localVarFile *os.File
 	if localVarOptionals != nil && localVarOptionals.RubygemsAsset.IsSet() {
 		localVarFileOk := false
 		localVarFile, localVarFileOk = localVarOptionals.RubygemsAsset.Value().(*os.File)
 		if !localVarFileOk {
-				return nil, reportError("rubygemsAsset should be *os.File")
+			return nil, reportError("rubygemsAsset should be *os.File")
 		}
 	}
 	if localVarFile != nil {
@@ -475,12 +470,11 @@ func (a *ComponentsApiService) UploadComponent(ctx context.Context, repository s
 		localVarFileName = localVarFile.Name()
 		localVarFile.Close()
 	}
-    var localVarFile *os.File
 	if localVarOptionals != nil && localVarOptionals.NugetAsset.IsSet() {
 		localVarFileOk := false
 		localVarFile, localVarFileOk = localVarOptionals.NugetAsset.Value().(*os.File)
 		if !localVarFileOk {
-				return nil, reportError("nugetAsset should be *os.File")
+			return nil, reportError("nugetAsset should be *os.File")
 		}
 	}
 	if localVarFile != nil {
@@ -489,12 +483,11 @@ func (a *ComponentsApiService) UploadComponent(ctx context.Context, repository s
 		localVarFileName = localVarFile.Name()
 		localVarFile.Close()
 	}
-    var localVarFile *os.File
 	if localVarOptionals != nil && localVarOptionals.NpmAsset.IsSet() {
 		localVarFileOk := false
 		localVarFile, localVarFileOk = localVarOptionals.NpmAsset.Value().(*os.File)
 		if !localVarFileOk {
-				return nil, reportError("npmAsset should be *os.File")
+			return nil, reportError("npmAsset should be *os.File")
 		}
 	}
 	if localVarFile != nil {
@@ -506,12 +499,11 @@ func (a *ComponentsApiService) UploadComponent(ctx context.Context, repository s
 	if localVarOptionals != nil && localVarOptionals.RawDirectory.IsSet() {
 		localVarFormParams.Add("raw.directory", parameterToString(localVarOptionals.RawDirectory.Value(), ""))
 	}
-    var localVarFile *os.File
 	if localVarOptionals != nil && localVarOptionals.RawAsset1.IsSet() {
 		localVarFileOk := false
 		localVarFile, localVarFileOk = localVarOptionals.RawAsset1.Value().(*os.File)
 		if !localVarFileOk {
-				return nil, reportError("rawAsset1 should be *os.File")
+			return nil, reportError("rawAsset1 should be *os.File")
 		}
 	}
 	if localVarFile != nil {
@@ -523,12 +515,11 @@ func (a *ComponentsApiService) UploadComponent(ctx context.Context, repository s
 	if localVarOptionals != nil && localVarOptionals.RawAsset1Filename.IsSet() {
 		localVarFormParams.Add("raw.asset1.filename", parameterToString(localVarOptionals.RawAsset1Filename.Value(), ""))
 	}
-    var localVarFile *os.File
 	if localVarOptionals != nil && localVarOptionals.RawAsset2.IsSet() {
 		localVarFileOk := false
 		localVarFile, localVarFileOk = localVarOptionals.RawAsset2.Value().(*os.File)
 		if !localVarFileOk {
-				return nil, reportError("rawAsset2 should be *os.File")
+			return nil, reportError("rawAsset2 should be *os.File")
 		}
 	}
 	if localVarFile != nil {
@@ -540,12 +531,11 @@ func (a *ComponentsApiService) UploadComponent(ctx context.Context, repository s
 	if localVarOptionals != nil && localVarOptionals.RawAsset2Filename.IsSet() {
 		localVarFormParams.Add("raw.asset2.filename", parameterToString(localVarOptionals.RawAsset2Filename.Value(), ""))
 	}
-    var localVarFile *os.File
 	if localVarOptionals != nil && localVarOptionals.RawAsset3.IsSet() {
 		localVarFileOk := false
 		localVarFile, localVarFileOk = localVarOptionals.RawAsset3.Value().(*os.File)
 		if !localVarFileOk {
-				return nil, reportError("rawAsset3 should be *os.File")
+			return nil, reportError("rawAsset3 should be *os.File")
 		}
 	}
 	if localVarFile != nil {
@@ -557,12 +547,11 @@ func (a *ComponentsApiService) UploadComponent(ctx context.Context, repository s
 	if localVarOptionals != nil && localVarOptionals.RawAsset3Filename.IsSet() {
 		localVarFormParams.Add("raw.asset3.filename", parameterToString(localVarOptionals.RawAsset3Filename.Value(), ""))
 	}
-    var localVarFile *os.File
 	if localVarOptionals != nil && localVarOptionals.AptAsset.IsSet() {
 		localVarFileOk := false
 		localVarFile, localVarFileOk = localVarOptionals.AptAsset.Value().(*os.File)
 		if !localVarFileOk {
-				return nil, reportError("aptAsset should be *os.File")
+			return nil, reportError("aptAsset should be *os.File")
 		}
 	}
 	if localVarFile != nil {
@@ -586,12 +575,11 @@ func (a *ComponentsApiService) UploadComponent(ctx context.Context, repository s
 	if localVarOptionals != nil && localVarOptionals.Maven2Packaging.IsSet() {
 		localVarFormParams.Add("maven2.packaging", parameterToString(localVarOptionals.Maven2Packaging.Value(), ""))
 	}
-    var localVarFile *os.File
 	if localVarOptionals != nil && localVarOptionals.Maven2Asset1.IsSet() {
 		localVarFileOk := false
 		localVarFile, localVarFileOk = localVarOptionals.Maven2Asset1.Value().(*os.File)
 		if !localVarFileOk {
-				return nil, reportError("maven2Asset1 should be *os.File")
+			return nil, reportError("maven2Asset1 should be *os.File")
 		}
 	}
 	if localVarFile != nil {
@@ -606,12 +594,11 @@ func (a *ComponentsApiService) UploadComponent(ctx context.Context, repository s
 	if localVarOptionals != nil && localVarOptionals.Maven2Asset1Extension.IsSet() {
 		localVarFormParams.Add("maven2.asset1.extension", parameterToString(localVarOptionals.Maven2Asset1Extension.Value(), ""))
 	}
-    var localVarFile *os.File
 	if localVarOptionals != nil && localVarOptionals.Maven2Asset2.IsSet() {
 		localVarFileOk := false
 		localVarFile, localVarFileOk = localVarOptionals.Maven2Asset2.Value().(*os.File)
 		if !localVarFileOk {
-				return nil, reportError("maven2Asset2 should be *os.File")
+			return nil, reportError("maven2Asset2 should be *os.File")
 		}
 	}
 	if localVarFile != nil {
@@ -626,12 +613,11 @@ func (a *ComponentsApiService) UploadComponent(ctx context.Context, repository s
 	if localVarOptionals != nil && localVarOptionals.Maven2Asset2Extension.IsSet() {
 		localVarFormParams.Add("maven2.asset2.extension", parameterToString(localVarOptionals.Maven2Asset2Extension.Value(), ""))
 	}
-    var localVarFile *os.File
 	if localVarOptionals != nil && localVarOptionals.Maven2Asset3.IsSet() {
 		localVarFileOk := false
 		localVarFile, localVarFileOk = localVarOptionals.Maven2Asset3.Value().(*os.File)
 		if !localVarFileOk {
-				return nil, reportError("maven2Asset3 should be *os.File")
+			return nil, reportError("maven2Asset3 should be *os.File")
 		}
 	}
 	if localVarFile != nil {
@@ -662,10 +648,9 @@ func (a *ComponentsApiService) UploadComponent(ctx context.Context, repository s
 		return localVarHttpResponse, err
 	}
 
-
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body: localVarBody,
+			body:  localVarBody,
 			error: localVarHttpResponse.Status,
 		}
 		return localVarHttpResponse, newErr

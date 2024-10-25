@@ -1,20 +1,15 @@
 package config
 
 import (
-	"context"
 	"github.com/knadh/koanf/parsers/hcl"
 	"github.com/knadh/koanf/providers/env"
 	"github.com/knadh/koanf/providers/file"
 	"github.com/knadh/koanf/providers/posflag"
 	"github.com/knadh/koanf/v2"
 	"github.com/rs/zerolog"
-	zeroLogger "github.com/rs/zerolog/log"
-	pkgerrors "github.com/rs/zerolog/pkgerrors"
 	flag "github.com/spf13/pflag"
 	"os"
 	"strings"
-	"sync"
-	"time"
 )
 
 var conf = koanf.Conf{
@@ -23,42 +18,7 @@ var conf = koanf.Conf{
 }
 var k = koanf.NewWithConf(conf)
 
-func loggerWithContext(ctx context.Context) *zerolog.Logger {
-	logger := logger()
-	withContext := logger.WithContext(ctx)
-	return zerolog.Ctx(withContext)
-}
-
-func logger() zerolog.Logger {
-	consoleWriter := zerolog.ConsoleWriter{Out: os.Stdout, TimeFormat: time.RFC3339Nano}
-	zerolog.TimeFieldFormat = zerolog.TimeFormatUnixMicro
-	zerolog.ErrorStackMarshaler = pkgerrors.MarshalStack
-	//multi := zerolog.MultiLevelWriter(consoleWriter, os.Stdout)
-	//
-	//logger := zerolog.New(multi).With().Timestamp().Logger()
-	return zeroLogger.Output(consoleWriter)
-}
-
-var singleInstance *App
-var lock = &sync.Mutex{}
-
-func AppInstance() *App {
-	lock.Lock()
-	defer lock.Unlock()
-	if singleInstance == nil {
-		withContext := loggerWithContext(context.Background())
-		background := context.Background()
-		config := loadConfig(withContext)
-		singleInstance = &App{
-			ctx: background,
-			log: withContext,
-			cfg: config,
-		}
-	}
-	return singleInstance
-}
-
-func loadConfig(log *zerolog.Logger) AppConfig {
+func LoadConfig(log *zerolog.Logger) AppConfig {
 	// Use the POSIX compliant pflag lib instead of Go's flag lib.
 	f := flag.NewFlagSet("nexushk", flag.ContinueOnError)
 	f.Usage = func() {
@@ -83,7 +43,7 @@ func loadConfig(log *zerolog.Logger) AppConfig {
 	f.String("nexusServer.port", "443", "port of the grafana server")
 	f.String("nexusServer.username", "nouser", "api user for the nexus server")
 	f.String("nexusServer.password", "nopass", "api pass for the nexus server")
-
+	f.Int("nexusServer.keepImages.default", 1, "How many images should be left after deletion for a version of an image")
 	err := f.Parse(os.Args[1:])
 	if err != nil {
 		panic(err)
@@ -114,6 +74,7 @@ func loadConfig(log *zerolog.Logger) AppConfig {
 	}
 
 	level, err := zerolog.ParseLevel(config.LogLevel)
+
 	if err != nil {
 		zerolog.SetGlobalLevel(zerolog.InfoLevel)
 		log.Warn().Msgf("Can't parse supported loglevel %s use default %s", config.LogLevel, zerolog.InfoLevel)

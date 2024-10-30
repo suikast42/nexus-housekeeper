@@ -12,7 +12,7 @@ func main() {
 
 	err := instance.DeleteOldContainers()
 	if err != nil {
-		instance.Logger().Err(err)
+		instance.Logger().Err(err).Msg("Can't delete images from nexus")
 	}
 	//configuration, _, err := instance.ClientNexus().ComponentsApi.GetComponents(instance.Context(), "dockerLocal", &nexus3.ComponentsApiGetComponentsOpts{})
 

@@ -3,6 +3,7 @@ package app
 import (
 	"errors"
 	"fmt"
+	"github.com/antihax/optional"
 	"github.com/blang/semver"
 	"github.com/suikast42/nexus-housekeeper/client/nexus3"
 	"net/http"
@@ -17,26 +18,26 @@ func (a *App) DeleteOldContainers() error {
 		return err
 	}
 	for _, repo := range ofType {
-		a.Logger().Info().Msg(fmt.Sprintf("%s", repo.Name))
+		a.Logger().Info().Msg(fmt.Sprintf("\t%s", repo.Name))
 		assets, err := a.getImagesOfRepo(repo)
 		if err != nil {
 			return err
 		}
 		for k, components := range a.nexusComponentsMap(assets) {
-			a.Logger().Info().Msg(fmt.Sprintf("Repo name: %s", repo.Name))
+			//a.Logger().Info().Msg(fmt.Sprintf("Repo name: %s", repo.Name))
 			val, ok := a.Config().NexusServer.KeepImages[repo.Name]
 			if !ok {
 				val = a.Config().NexusServer.KeepImages["default"]
 			}
-			for _, c := range components {
-				a.Logger().Info().Msg(fmt.Sprintf("\t%s:%s", c.Name, c.Version))
-			}
+			//for _, c := range components {
+			//	a.Logger().Info().Msg(fmt.Sprintf("\t%s:%s", c.Name, c.Version))
+			//}
 			sortVersions(components)
 			if val > 0 && len(components) > val {
-				a.Logger().Info().Msg(fmt.Sprintf("\tDeleteing Versions of %s", k))
+				a.Logger().Info().Msg(fmt.Sprintf("\t\tDeleteing Versions of %s", k))
 				// Starting to iterate from the first delete pos
 				for _, component := range components[val:] {
-					a.Logger().Info().Msg(fmt.Sprintf("\t\t%s", component.Version))
+					a.Logger().Info().Msg(fmt.Sprintf("\t\t\t%s", component.Version))
 					err := a.deleteComponent(component)
 					if err != nil {
 						a.Logger().Err(err)
@@ -70,10 +71,11 @@ func (a *App) deleteComponent(xo nexus3.ComponentXo) error {
 func (a *App) getReposOfType(_type string) ([]nexus3.AbstractApiRepository, error) {
 	var result = []nexus3.AbstractApiRepository{}
 	repos, response, err := a.ClientNexus().RepositoryManagementApi.GetRepositories(a.Context())
-	defer response.Body.Close()
 	if err != nil {
 		return nil, err
 	}
+	defer response.Body.Close()
+
 	if response.StatusCode != http.StatusOK {
 		return nil, errors.New(statusCodeToString(response))
 	}
@@ -87,7 +89,9 @@ func (a *App) getReposOfType(_type string) ([]nexus3.AbstractApiRepository, erro
 }
 
 func (a *App) getImagesOfRepo(repo nexus3.AbstractApiRepository) ([]nexus3.ComponentXo, error) {
+	result := []nexus3.ComponentXo{}
 	components, response, err := a.ClientNexus().ComponentsApi.GetComponents(a.Context(), repo.Name, &nexus3.ComponentsApiGetComponentsOpts{})
+
 	defer response.Body.Close()
 	if err != nil {
 		return nil, err
@@ -95,7 +99,21 @@ func (a *App) getImagesOfRepo(repo nexus3.AbstractApiRepository) ([]nexus3.Compo
 	if response.StatusCode != http.StatusOK {
 		return nil, errors.New(statusCodeToString(response))
 	}
-	return components.Items, nil
+	result = append(result, components.Items...)
+	// Nexus uses a pagination
+	// We must do the call until the token is nil
+	var token = components.ContinuationToken
+	for {
+		if len(token) > 0 {
+			components, _, _ = a.ClientNexus().ComponentsApi.GetComponents(a.Context(), repo.Name, &nexus3.ComponentsApiGetComponentsOpts{ContinuationToken: optional.NewString(token)})
+			result = append(result, components.Items...)
+			token = components.ContinuationToken
+		} else {
+			break
+		}
+
+	}
+	return result, nil
 }
 
 func (a *App) nexusComponentsMap(components []nexus3.ComponentXo) map[string][]nexus3.ComponentXo {

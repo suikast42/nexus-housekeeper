@@ -10,7 +10,10 @@ func main() {
 
 	instance.Logger().Info().Msg(fmt.Sprintf("Starting nexus housekeeper in version %s  with config\n%s ", instance.Version(), instance.Config()))
 
-	instance.DeleteOldContainers()
+	err := instance.DeleteOldContainers()
+	if err != nil {
+		instance.Logger().Err(err)
+	}
 	//configuration, _, err := instance.ClientNexus().ComponentsApi.GetComponents(instance.Context(), "dockerLocal", &nexus3.ComponentsApiGetComponentsOpts{})
 
 }

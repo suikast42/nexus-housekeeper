@@ -23,9 +23,13 @@ func (a *App) DeleteOldContainers() error {
 			return err
 		}
 		for k, components := range a.nexusComponentsMap(assets) {
+			a.Logger().Info().Msg(fmt.Sprintf("Repo name: %s", repo.Name))
 			val, ok := a.Config().NexusServer.KeepImages[repo.Name]
 			if !ok {
 				val = a.Config().NexusServer.KeepImages["default"]
+			}
+			for _, c := range components {
+				a.Logger().Info().Msg(fmt.Sprintf("\t%s:%s", c.Name, c.Version))
 			}
 			sortVersions(components)
 			if val > 0 && len(components) > val {
